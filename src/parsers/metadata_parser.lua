@@ -167,4 +167,25 @@ function MetadataParser.extract_series(mobi_reader, fallback_title, fallback_fil
     return nil, nil
 end
 
+-- Extract Calibre UUID or ASIN from a KFX file
+function MetadataParser.extract_kfx_uuid(filepath)
+    local f = io.open(filepath, "rb")
+    if not f then return nil end
+    local chunk = f:read(131072) or ""
+    f:close()
+
+    -- 1. Check for embedded Calibre UUID
+    local cid = string.match(chunk, "calibre:([0-9a-fA-F%-]{36})")
+    if cid then return cid end
+
+    -- 2. Check for ASIN / content_id in Ion metadata
+    local asin = string.match(chunk, "ASIN.-\002\179.([A-Z0-9]+)")
+        or string.match(chunk, "content_id.-\002\179.([A-Z0-9]+)")
+        or string.match(chunk, "[^%w](B0[0-9A-Z]{8})[^%w]")
+    if asin then return asin end
+
+    -- 3. Fallback: Any 36-char UUID
+    return string.match(chunk, "([0-9a-fA-F]{8}%-[0-9a-fA-F]{4}%-[0-9a-fA-F]{4}%-[0-9a-fA-F]{4}%-[0-9a-fA-F]{12})")
+end
+
 return MetadataParser

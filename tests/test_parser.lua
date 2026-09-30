@@ -93,4 +93,8 @@ assert_eq(dec.active, true, "JSON boolean")
 assert_eq(dec.tags[1], "a", "JSON array item 1")
 assert_eq(dec.tags[2], "b", "JSON array item 2")
 
+print("\n=== Running MetadataParser KFX UUID Extraction Tests ===")
+local kfx_id = MetadataParser.extract_kfx_uuid("Nguon Coi - Dan Brown.kfx")
+assert_eq(kfx_id, "B01LY7FD0D", "MetadataParser.extract_kfx_uuid")
+
 print("\nAll unit tests passed successfully!")

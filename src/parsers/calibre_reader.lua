@@ -119,9 +119,16 @@ function CalibreReader:load()
                 self.by_title[string.lower(item.title)] = series_info
             end
 
-            -- Index by uuid
+            -- Index by uuid and identifiers (asin, mobi-asin, etc.)
             if item.uuid and item.uuid ~= "" then
                 self.by_uuid[item.uuid] = series_info
+            end
+            if item.identifiers and type(item.identifiers) == "table" then
+                for _, id in pairs(item.identifiers) do
+                    if id and id ~= "" then
+                        self.by_uuid[tostring(id)] = series_info
+                    end
+                end
             end
         end
     end

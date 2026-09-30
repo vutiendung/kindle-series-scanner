@@ -17,6 +17,7 @@ local Config = {
         [".azw3"] = true,
         [".mobi"] = true,
         [".azw"]  = true,
+        [".kfx"]  = true,
     },
 
     -- Log file paths (stored on user storage for persistence and easy viewing)

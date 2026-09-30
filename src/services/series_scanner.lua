@@ -106,11 +106,15 @@ function SeriesScanner:scan_and_sync()
             -- 1. Read file to extract Calibre UUID
             local book_uuid = nil
             if Config.SUPPORTED_EXTENSIONS[ext] then
-                local reader = MobiReader.new(filepath)
-                if reader:parse_header() then
-                    book_uuid = reader:get_uuid()
+                if ext == ".kfx" then
+                    book_uuid = MetadataParser.extract_kfx_uuid(filepath)
+                else
+                    local reader = MobiReader.new(filepath)
+                    if reader:parse_header() then
+                        book_uuid = reader:get_uuid()
+                    end
+                    reader:close()
                 end
-                reader:close()
             end
 
             -- 2. Match with metadata.calibre at /mnt/us using UUID (or path/title)

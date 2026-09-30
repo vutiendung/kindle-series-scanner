@@ -17,28 +17,38 @@ local function test_file(filepath, db_path)
     print("Reading Book File: " .. filepath)
     print(string.rep("=", 70))
 
-    local reader = MobiReader.new(filepath)
-    local ok, err = reader:parse_header()
-    if not ok then
-        print(string.format("[ERROR] Failed to parse %s: %s", filepath, tostring(err)))
-        return
-    end
+    local ext = string.lower(string.match(filepath, "(%.%w+)$") or "")
+    local reader = nil
+    local title, author, asin = nil, "Unknown Author", "N/A"
+    local book_uuid = nil
 
-    local title = reader.metadata.title or reader.header.name or "Unknown Title"
-    local author = reader.metadata.author or "Unknown Author"
-    local asin = reader.metadata.asin or reader.metadata.calibre_id or "N/A"
+    if ext == ".kfx" then
+        book_uuid = MetadataParser.extract_kfx_uuid(filepath)
+        asin = book_uuid or "N/A"
+        title = string.match(filepath, "([^/\\]+)%.%w+$") or filepath
+    else
+        reader = MobiReader.new(filepath)
+        local ok, err = reader:parse_header()
+        if not ok then
+            print(string.format("[ERROR] Failed to parse %s: %s", filepath, tostring(err)))
+            return
+        end
+        title = reader.metadata.title or reader.header.name or "Unknown Title"
+        author = reader.metadata.author or "Unknown Author"
+        asin = reader.metadata.asin or reader.metadata.calibre_id or "N/A"
+        book_uuid = reader:get_uuid()
+    end
 
     print("\n--- Book Information ---")
     print(string.format("  Title:     %s", title))
     print(string.format("  Author:    %s", author))
     print(string.format("  cdeKey:    %s", asin))
-    print(string.format("  Publisher: %s", reader.metadata.publisher or "N/A"))
-    print(string.format("  Language:  %s", reader.metadata.language or "N/A"))
+    print(string.format("  Publisher: %s", (reader and reader.metadata.publisher) or "N/A"))
+    print(string.format("  Language:  %s", (reader and reader.metadata.language) or "N/A"))
 
     -- 1. Extract series via Calibre UUID lookup in metadata.calibre
     local CalibreReader = require("src.parsers.calibre_reader")
     local calibre_reader = CalibreReader.new("metadata.calibre")
-    local book_uuid = reader:get_uuid()
     local s_name, s_idx = nil, nil
 
     print("\n--- Calibre UUID & Metadata Lookup ---")
@@ -59,7 +69,7 @@ local function test_file(filepath, db_path)
     end
 
     -- Fallback: Extract from embedded XML if available
-    if not s_name then
+    if not s_name and reader then
         s_name, s_idx = MetadataParser.extract_series(reader, title, filepath)
         if s_name then
             print(string.format("  [EMBEDDED MATCH] Series Name : %s", s_name))
@@ -74,7 +84,7 @@ local function test_file(filepath, db_path)
         f:close()
         print("\n--- cc.db Database Linkage ---")
         local db = SqliteHelper.new(db_path)
-        local cde_key = reader.metadata.asin or reader.metadata.calibre_id
+        local cde_key = (reader and (reader.metadata.asin or reader.metadata.calibre_id)) or asin
         if cde_key then
             local rows = db:with_stripped_icu(function()
                 local sql = string.format([[
@@ -111,7 +121,9 @@ WHERE s.d_itemCdeKey = %s;
     end
     print(string.rep("=", 70) .. "\n")
 
-    reader:close()
+    if reader then
+        reader:close()
+    end
 end
 
 local target_file = arg and arg[1]
