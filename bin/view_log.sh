@@ -1,9 +1,11 @@
 #!/bin/sh
 # Display the latest dry-run/scan log on Kindle e-ink screen
 
-LOG="/tmp/kindle-series-scanner.log"
-if [ ! -f "$LOG" ] && [ -f "/mnt/us/kindle_series_scanner.log" ]; then
-    LOG="/mnt/us/kindle_series_scanner.log"
+LOG="/mnt/us/kindle_series_scanner.log"
+if [ ! -f "$LOG" ] && [ -f "/mnt/us/kindle_sereis.scanner.log" ]; then
+    LOG="/mnt/us/kindle_sereis.scanner.log"
+elif [ ! -f "$LOG" ] && [ -f "/tmp/kindle-series-scanner.log" ]; then
+    LOG="/tmp/kindle-series-scanner.log"
 fi
 
 if command -v eips >/dev/null 2>&1; then

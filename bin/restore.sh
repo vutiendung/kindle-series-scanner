@@ -13,7 +13,7 @@ if command -v eips >/dev/null 2>&1; then
 fi
 
 LUA_BIN="${LUA_BIN:-lua}"
-"$LUA_BIN" src/main.lua restore --eips >> /tmp/kindle-series-scanner.log 2>&1
+"$LUA_BIN" src/main.lua restore --eips >> /mnt/us/kindle_series_scanner.log 2>&1
 
 if command -v eips >/dev/null 2>&1; then
     eips 3 16 "  Database restored! Restarting framework..."

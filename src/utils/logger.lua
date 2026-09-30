@@ -6,7 +6,7 @@
 local Logger = {}
 Logger.__index = Logger
 
-local LOG_FILE = "/tmp/kindle-series-scanner.log"
+local LOG_FILE = "/mnt/us/kindle_series_scanner.log"
 
 function Logger.new(opts)
     local self = setmetatable({}, Logger)
@@ -25,8 +25,12 @@ function Logger:log(level, msg)
         print(line)
     end
 
-    local files = { self.log_file, "/mnt/us/kindle_series_scanner.log" }
-    for _, path in ipairs(files) do
+    local paths = { self.log_file }
+    if self.log_file ~= "/mnt/us/kindle_series_scanner.log" then
+        table.insert(paths, "/mnt/us/kindle_series_scanner.log")
+    end
+
+    for _, path in ipairs(paths) do
         if path then
             local f = io.open(path, "a")
             if f then

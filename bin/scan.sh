@@ -25,7 +25,7 @@ fi
 # Stop Content Catalog daemon before database update
 stop com.lab126.ccat 2>/dev/null
 
-"$LUA_BIN" src/main.lua scan --eips >> /tmp/kindle-series-scanner.log 2>&1
+"$LUA_BIN" src/main.lua scan --eips >> /mnt/us/kindle_series_scanner.log 2>&1
 
 # Restart Content Catalog daemon and Kindle framework
 start com.lab126.ccat 2>/dev/null

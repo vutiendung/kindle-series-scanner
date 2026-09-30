@@ -4,6 +4,12 @@ An automated Kindle KUAL extension written in **Lua 5.1.4** to group sideloaded 
 
 ---
 
+## 📸 Screenshots
+
+| Series Grouped in Library | Inside Series (Reading Order) |
+| :---: | :---: |
+| ![Series Grouped in Library](docs/images/image_1.jpeg) | ![Inside Series View](docs/images/image_2.jpeg) |
+
 ## 📖 User Workflow: How to Use
 
 Follow this simple 4-step workflow whenever you add new books with series to your Kindle:
@@ -90,7 +96,7 @@ sequenceDiagram
 | :--- | :--- |
 | **Scan & Sync Series** | Scans books, matches series from `metadata.calibre`, updates `cc.db`, and restarts framework. |
 | **Preview / Dry Run** | Simulates the scan without modifying `cc.db` to preview series detection. |
-| **View Last Log** | Displays the latest scanner log directly on the Kindle e-ink screen. |
+| **View Last Log** | Displays the latest scanner log directly on the Kindle e-ink screen (reads from `/mnt/us/kindle_series_scanner.log`). |
 | **Backup cc.db** | Creates a timestamped backup of `cc.db` in `/mnt/us/kindle_db_backup/`. |
 | **Restore cc.db** | Restores `cc.db` from the latest backup in `/mnt/us/kindle_db_backup/`. |
 | **Diagnose cc.db** | Prints all registered series and member books currently in `cc.db`. |

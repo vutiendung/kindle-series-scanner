@@ -19,8 +19,8 @@ local Config = {
         [".azw"]  = true,
     },
 
-    -- Log file paths (both in /tmp and on USB storage for easy viewing on PC)
-    LOG_FILE = "/tmp/kindle-series-scanner.log",
+    -- Log file paths (stored on user storage for persistence and easy viewing)
+    LOG_FILE = "/mnt/us/kindle_series_scanner.log",
     USER_LOG_FILE = "/mnt/us/kindle_series_scanner.log",
 
     -- Database backup folder path (on Kindle internal user storage)
