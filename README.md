@@ -100,35 +100,7 @@ sequenceDiagram
 
 ---
 
-## 💻 SSH / Terminal Usage
+## 📱 Tested Devices & Compatibility
 
-You can also run all actions directly via SSH on your Kindle:
-
-```bash
-# Preview series detection (Dry run)
-/mnt/us/extensions/kindle-series-scanner/bin/dry_run.sh
-
-# Scan and sync series
-/mnt/us/extensions/kindle-series-scanner/bin/scan.sh
-
-# Reset all series
-/mnt/us/extensions/kindle-series-scanner/bin/clean_all.sh
-
-# Export cc.db to /mnt/us
-/mnt/us/extensions/kindle-series-scanner/bin/copy_db.sh
-
-# View log
-/mnt/us/extensions/kindle-series-scanner/bin/view_log.sh
-```
-
----
-
-## 🧪 Running Automated Tests Locally
-
-```bash
-# Run unit tests
-lua tests/test_parser.lua
-
-# Run end-to-end database tests
-lua tests/test_end_to_end.lua
-```
+- **Kindle Oasis 3 (KOA3)** running the latest firmware.
+- Compatible with jailbroken Kindles running firmware 5.12+ with KUAL support.
