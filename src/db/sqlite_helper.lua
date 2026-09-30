@@ -280,9 +280,9 @@ function SqliteHelper:_generate_series_sql(series_obj)
             self:escape(position_label)
         ))
 
-        -- Hide standalone book entry if in series (p_seriesState = 0)
+        -- Hide standalone book entry if in series (p_seriesState = 0) and ensure no KU/PR badges (p_originType = 0, p_contentState = 1)
         table.insert(sql_statements, string.format(
-            "UPDATE Entries SET p_seriesState = 0 WHERE p_cdeKey = %s AND p_type = 'Entry:Item';",
+            "UPDATE Entries SET p_seriesState = 0, p_originType = 0, p_contentState = 1 WHERE p_cdeKey = %s AND p_type = 'Entry:Item';",
             self:escape(book.cdeKey)
         ))
     end
@@ -539,7 +539,7 @@ function SqliteHelper:clean_all_series()
 BEGIN TRANSACTION;
 DELETE FROM Series;
 DELETE FROM Entries WHERE p_type = 'Entry:Item:Series';
-UPDATE Entries SET p_seriesState = 1 WHERE p_type = 'Entry:Item';
+UPDATE Entries SET p_seriesState = 1, p_originType = 0, p_contentState = 1 WHERE p_type = 'Entry:Item';
 COMMIT;
 ]]
         return self:exec(sql)
