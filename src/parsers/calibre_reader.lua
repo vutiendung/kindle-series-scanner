@@ -139,8 +139,16 @@ function CalibreReader:lookup_series(book)
 
     local match = nil
 
-    -- 1. Lookup by location (/mnt/us/documents/...)
-    if book.location and book.location ~= "" then
+    -- 1. Lookup by UUID (extracted from file or cc.db)
+    if book.uuid and book.uuid ~= "" then
+        match = self.by_uuid[book.uuid]
+    end
+    if not match and book.cdeKey and book.cdeKey ~= "" then
+        match = self.by_uuid[book.cdeKey]
+    end
+
+    -- 2. Lookup by location (/mnt/us/documents/...)
+    if not match and book.location and book.location ~= "" then
         match = self.by_path[book.location]
         if not match then
             local base = string.match(book.location, "([^/\\]+)$")
@@ -150,17 +158,9 @@ function CalibreReader:lookup_series(book)
         end
     end
 
-    -- 2. Lookup by title
+    -- 3. Lookup by title
     if not match and book.title and book.title ~= "" then
         match = self.by_title[book.title] or self.by_title[string.lower(book.title)]
-    end
-
-    -- 3. Lookup by UUID / cdeKey
-    if not match and book.uuid and book.uuid ~= "" then
-        match = self.by_uuid[book.uuid]
-    end
-    if not match and book.cdeKey and book.cdeKey ~= "" then
-        match = self.by_uuid[book.cdeKey]
     end
 
     if match and match.series and match.series ~= "" then

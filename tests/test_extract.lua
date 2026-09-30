@@ -35,15 +35,36 @@ local function test_file(filepath, db_path)
     print(string.format("  Publisher: %s", reader.metadata.publisher or "N/A"))
     print(string.format("  Language:  %s", reader.metadata.language or "N/A"))
 
-    -- 1. Extract series from AZW3 file content
-    print("\n--- AZW3 File Series Extraction ---")
-    local s_name, s_idx = MetadataParser.extract_series(reader, title, filepath)
+    -- 1. Extract series via Calibre UUID lookup in metadata.calibre
+    local CalibreReader = require("src.parsers.calibre_reader")
+    local calibre_reader = CalibreReader.new("metadata.calibre")
+    local book_uuid = reader:get_uuid()
+    local s_name, s_idx = nil, nil
 
-    if s_name then
-        print(string.format("  [FOUND IN FILE] Series Name  : %s", s_name))
-        print(string.format("                  Series Number: %s", tostring(s_idx or 1)))
-    else
-        print("  [FILE SCAN] No embedded series tag found inside raw AZW3 metadata.")
+    print("\n--- Calibre UUID & Metadata Lookup ---")
+    print(string.format("  Extracted UUID : %s", tostring(book_uuid or "N/A")))
+
+    if calibre_reader:load() then
+        s_name, s_idx = calibre_reader:lookup_series({
+            uuid = book_uuid or asin,
+            location = filepath,
+            title = title
+        })
+        if s_name then
+            print(string.format("  [CALIBRE MATCH] Series Name  : %s", s_name))
+            print(string.format("                  Series Number: %s", tostring(s_idx or 1)))
+        else
+            print("  [CALIBRE] Book UUID not found in metadata.calibre cache.")
+        end
+    end
+
+    -- Fallback: Extract from embedded XML if available
+    if not s_name then
+        s_name, s_idx = MetadataParser.extract_series(reader, title, filepath)
+        if s_name then
+            print(string.format("  [EMBEDDED MATCH] Series Name : %s", s_name))
+            print(string.format("                   Series Number: %s", tostring(s_idx or 1)))
+        end
     end
 
     -- 2. Lookup in cc.db (if database is available)

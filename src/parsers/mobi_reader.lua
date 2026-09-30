@@ -153,6 +153,9 @@ function MobiReader:parse_exth(data, start_pos)
             if cid then self.metadata.calibre_id = cid end
         elseif rec_type == 113 then
             self.metadata.asin = rec_data
+            if not self.metadata.calibre_id and string.match(rec_data, "^[0-9a-fA-F%-]{36}$") then
+                self.metadata.calibre_id = rec_data
+            end
         elseif rec_type == 121 then
             self.metadata.kf8_header_index = BinaryReader.get_uint32_be(rec_data, 1)
         elseif rec_type == 503 then
